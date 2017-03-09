@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="UTF-8">
+    <style>
+		#weather-top{
+
+			margin-left: auto;
+			margin-right:auto;
+			margin-bottom: 25px;
+			width: 90%;
+			border: 1px dashed black;
+			padding: 10px;
+			margin-top: 20px;
+	
+		}
+		
+		#displayResult{
+			width: 100%;
+			float: left;
+		}
+		
+		#weather-bottom{
+
+			margin-left: auto;
+			margin-right:auto;
+			margin-bottom: 25px;
+			width: 90%;
+			border: 1px dashed black;
+			padding: 10px;
+		}	
+		
+		form{
+			border: 4px double black;
+			padding: 5px;		
+		}
+		
+		#firstForm{
+			display:inline;
+			width: 45%;
+			float: left;
+			padding: 5px;
+		}
+		
+		#secondForm{
+			display:inline;
+			width: 45%;
+			float: left;
+			padding: 5px;
+		}
+		
+		.searchItem{
+			margin: auto;
+			width: 200px;
+		}
+		
+		#searchSubmit{
+			margin-top: 5px;
+			margin-left: auto;
+			margin-right: auto;
+			width: 100px;
+		}
+
+		.custInfoLbl{
+			margin: 10px;
+			display: inline;
+			width: 95%;
+		}
+		.custInfoInpt{
+			width: 25%;
+			display: inline;
+		}
+		.radioline{
+			display: block;
+		}
+		input[type = "radio"]{
+			padding: 10px;
+		}
+		textarea{
+			min-height: 150px;
+			min-width: 80%;
+			margin-left: 10%;
+			overflow: hidden;
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}
+		fieldset{
+			margin: 10px 5px 30px 5px;
+		}
+		#mailList{
+			margin-bottom: 10px;
+			display: block;
+		}
+		#mailOptIn{
+			margin-left: 10%;
+			margin-right: 10px;
+		}
+		#contactSubmit{
+			margin: auto;
+			display: block;
+		}
+	</style>
+  </head>
+  <body>
+	<div id="firstForm">
+		<form>
+			<div id="weather-top">
+				<h2>Please select how you would like to search:</h2>
+				<div class = "searchItem" id="zipdiv">
+					<input type="radio" id="zipRadio" name="searchType" value="1">Zip Code<br>
+					<input type="text" name="text" id="zip"><br>
+				</div>
+				<div class = "searchItem" id="citydiv">
+					<input type="radio" id="cityRadio" name="searchType" value="2">City & State<br>
+					<input type="text" name="text" id="City"><br>
+					<input class = "searchItem" type="submit" id="sendWeatherSearch" value="Search">
+				</div>
+				
+			 </div>
+			 <div id="weather-bottom">
+			 
+				<h4 id="ResultHeader">Current weather</h4>
+				<table>
+					<tr>
+						<th>Temperature: </th>
+						<td id="temp"></td>
+					</tr>
+					<tr>
+						<th>Humidity: </th>
+						<td id="humidity"></td>
+					</tr>			
+				</table>
+
+			</div>
+		</form>
+		
+	</div>
+	<div id="secondForm">
+		<form>
+			<div id="secFormHeader">
+				<h2>Contact Form</h2>
+				<fieldset class="2ndForm" id="customerInfo">
+					<legend>Your Info:</legend>
+					 <label class="custInfoLbl">Name: </label> <input class="custInfoInpt" name="custName" type="text" id="nameInput"> <br>
+					 <label class="custInfoLbl">Tele: </label> <input class="custInfoInpt" name="custPhone" type="tel" id="phoneInput"><br> 
+					 <label class="custInfoLbl">Email: </label> <input class="custInfoInpt" name="custEmail" type="emal" id="emailInput">
+				</fieldset>
+				<fieldset class="2ndForm">
+					<legend>How did you hear about us? </legend>
+					<span class="radioline"> <input type="radio" name="hear-about" value="website"><label id='opt1'> www.website.com </label> </span>
+					<span class="radioline"> <input type="radio" name="hear-about" value="facebook"><label id='opt2'> Facebook </label> </span>
+					<span class="radioline"> <input type="radio" name="hear-about" value="reddit"><label id='opt3'> Reddit </label> </span>
+					<span class="radioline"> <input type="radio" name="hear-about" value="other"><label id='opt4'> Other </label> </span>
+				</fieldset>
+				<fieldset class="2ndForm">
+					<legend>Your message</legend>
+					<textarea name="cust"></textarea>
+				</fieldset>
+				<span id="mailList"><input type="checkbox" id="mailOptIn"><label>Would you like to subscribe to our mailing list?</label></span>
+				<input type="submit" id="contactSubmit" value="Send Message">
+			</div>
+		</form>
+	</div>
+	<pre id="displayResult" display="block">
+		PlaceHolderText
+	</pre>
+	<script id="javascript" src = "script.js"></script>
+  </body>
+</html>
