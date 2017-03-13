@@ -1,133 +1,143 @@
-var appid = "&appid=dbf5bbbaeef83b5dccc8aa6dab999515";
-var baseURL = "http://api.openweathermap.org/data/2.5/weather?";
-var unitFormat = "&units=imperial";
-var doOnce = 0;
+/**
+ * Created by cjdhein on 2/7/2017.
+ */
+setup();
 
-document.addEventListener('DOMContentLoaded', initializePage);
-
-
-
-function initializePage(){
+function setup(){
+    document.body.appendChild(makeTable());
+	labelColumns();
+    var addButton = document.getElementById("addRow");
 	
-	if(doOnce == 0){
-		document.getElementById('City').style.visibility = "hidden";
-		document.getElementById('zip').style.visibility = "hidden";
-		document.getElementById('sendWeatherSearch').style.visibility = "hidden";
-		doOnce = 1;
-	}
-	
-	document.getElementById('zipRadio').checked = false;
-	document.getElementById('cityRadio').checked = false;
-	
-	document.getElementById('zipRadio').addEventListener("change", function(event){
-		document.getElementById('zip').style.visibility = "visible";
-		document.getElementById('City').style.visibility = "hidden";
-		document.getElementById('sendWeatherSearch').style.visibility = "visible";
-		event.stopPropagation();
+	$(function(){
+		$("#date").datepicker({dateFormat: 'mm-dd-yy'});
 	});
-	
-	document.getElementById('cityRadio').addEventListener("change", function(event){
-			document.getElementById('zip').style.visibility = "hidden";
-			document.getElementById('City').style.visibility = "visible";
-			document.getElementById('sendWeatherSearch').style.visibility = "visible";
-			event.stopPropagation();
-	});
-	
-	document.getElementById('sendWeatherSearch').addEventListener('click', function(event){
-		var req = new XMLHttpRequest();
-		var searchTypeFlag;
-		
-		var options = document.getElementsByName('searchType');
-		for(var i = 0; i < options.length;i++){
-			if(options[i].checked == true){
-				searchTypeFlag = options[i].value;
-				break;
-			}
-		}
-		var searchType;
-		var searchString;
-		if(searchTypeFlag == 1){
-			searchType = "zip=";
-			searchString = document.getElementById('zip').value;
-		}else{
-			searchType = "q=";
-			searchString = document.getElementById('City').value;
-		}
-		
-		var fullURL = baseURL + searchType + searchString + unitFormat + appid;
-		
-		req.open('GET', fullURL, true);
-		
-		req.addEventListener('load', function(){
-			if(req.status >=200 && req.status < 400){
-				console.log(req.responseText);
-				var response = JSON.parse(req.responseText);
-				
-				
 
-				var cityName = response.name;
-				var currTemp = response.main['temp']; 
-				var humidity = response.main['humidity']; ;
-				
-				document.getElementById('ResultHeader').textContent = "Current weather in " + cityName;
-				document.getElementById('temp').textContent = currTemp;
-				document.getElementById('humidity').textContent = humidity;
-				
-				event.preventDefault();
-			}else{
-				console.log("Error in network request: " + req.statusText);
-			}
+    addButton.addEventListener("click", function(event){
+		var nameData = document.getElementById("exercise").value;
+		var weightData = document.getElementById("weight").value;
+		var repsData = document.getElementById("reps").value;
+		var dateData = document.getElementById("date").value;
+		var lbsData = document.getElementById("lbs").checked;
+		
+		var payload = {
+			name : nameData,
+			reps : repsData,
+			weight : weightData,
+			date : dateData,
+			lbs : lbsData
+		}
+		var fromServer;
+		
+		$.post("http://httpbin.org/post",payload, function(data){
+			console.log(data);
+			fromServer = data.form;
+			$("#thetable").append(addRow(payload));
+			resetForm();
 		});
 		
-		req.send(null);
-
-		 event.preventDefault();
-	});
-	
-		var postURL = "http://httpbin.org/post";
-		
-		var parameters;
-			
-		function getParameters(){
-			var nameValue = document.getElementById('nameInput').value;
-			var teleValue = document.getElementById('phoneInput').value;
-			var emailValue = document.getElementById('emailInput').value;
-			
-			if(document.querySelector('input[name="hear-about"]:checked').value != null){
-				var hearChoice = document.querySelector('input[name="hear-about"]:checked').value;
-			}else{
-				hearChoice = "No Selection Made";
-			}
-			var message = document.getElementsByName('cust')[0].value;
-			
-			var subscribe = document.getElementById('mailOptIn').value;
-			
-			parameters = new Object();
-			parameters.custInfo = {custName:nameValue, custPhone:teleValue, custEmail:emailValue};
-			parameters.howDidYouHear = hearChoice;
-			parameters.custMsg = message;
-			parameters.joinMailing = subscribe;
-		}
 
 		
-		document.getElementById('contactSubmit').addEventListener('click', function(event){
-			
-			var req = new XMLHttpRequest();	
-			req.open('POST', postURL, true);
-			req.setRequestHeader('Content-Type', 'application/json');
-			
-			req.addEventListener('load', function(){
-				var response = JSON.parse(req.responseText);
-				console.log(response);
-				document.getElementById('displayResult').textContent = req.responseText;
-				
-			});		
-			getParameters();
-			
-			req.send(JSON.stringify(parameters));
-			
-
-			event.preventDefault();
-			
-		});
+		//console.log(payload);
+		
+		event.preventDefault();
+	});  
+  
 }
+
+function resetForm(){
+	 document.getElementById("exercise").value = "";
+	 document.getElementById("weight").value = "";
+	 document.getElementById("reps").value = "";
+	 document.getElementById("date").value = "";
+	 document.getElementById("lbs").checked = false;	
+}
+
+function addRow(payload){
+	var newRow = document.createElement("tr");
+	for(var i = 0; i < 6; i++){
+		var subCell = document.createElement("td");
+		subCell.id = "cell" + i;
+		subCell.className = "dataCell";
+		if(i > 4){
+			var buttonForm = document.createElement("form");
+			buttonForm.method = "post";
+			
+			var editButton = document.createElement("button");
+			editButton.textContent = "Edit";
+			editButton.name="edit";
+			
+			editButton.addEventListener("click", function(event){
+				console.log("edit clicked");
+				event.preventDefault();
+			});
+			
+			var deleteButton = document.createElement("button");
+			deleteButton.name = "delete";
+			deleteButton.textContent = "Delete";
+			
+			deleteButton.addEventListener("click", function(event){
+				console.log("delete clicked");
+				event.preventDefault();
+			});			
+			
+			var hiddenId = document.createElement("input");
+			hiddenId.type = "hidden";
+			hiddenId.name = "rowId";
+			
+			buttonForm.appendChild(editButton);
+			buttonForm.appendChild(deleteButton);
+			buttonForm.appendChild(hiddenId);
+			subCell.appendChild(buttonForm);
+			subCell.className = "buttonCell";
+		}
+		newRow.appendChild(subCell);		
+	}
+	var newCells = newRow.childNodes;
+	newCells[0].textContent = payload.name;
+	newCells[1].textContent = payload.reps;
+	newCells[2].textContent = payload.weight;
+	newCells[3].textContent = payload.date;
+	newCells[4].textContent = payload.lbs;
+
+	
+	
+	return newRow;
+}
+
+function labelColumns(){
+	document.getElementById("head1").textContent = "Name";
+	document.getElementById("head1").className = "nameCell";
+	document.getElementById("head2").textContent = "Reps";
+	document.getElementById("head2").className = "repCell";
+	document.getElementById("head3").textContent = "Weight";
+	document.getElementById("head3").className = "weightCell";
+	document.getElementById("head4").textContent = "Date";
+	document.getElementById("head4").className = "dateCell";
+	document.getElementById("head5").textContent = "lbs";
+	document.getElementById("head5").className = "lbsCell";
+	document.getElementById("head6").className = "buttonHeader";
+}
+
+function makeTable(){
+    var table = document.createElement("table");
+    table.id = "thetable";
+	var headerRow = document.createElement("tr");
+	for(var i = 0; i < 6; i++){
+		var headCell = document.createElement("th");
+		headCell.className = "headCell";
+		headCell.id = ("head" + (i+1));
+		headerRow.appendChild(headCell);
+		
+	}
+		table.appendChild(headerRow);
+
+    return table;
+}
+
+
+function runProgram(){
+
+
+
+}
+
