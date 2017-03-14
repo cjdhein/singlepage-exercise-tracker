@@ -26,22 +26,19 @@ function setup(){
 			date : dateData,
 			lbs : lbsData
 		}
-		var fromServer;
-		
-		$.post("localhost:24561/post",payload, function(data){
-			console.log(data);
-			fromServer = data.form;
-			$("#thetable").append(addRow(payload));
-			resetForm();
-		});
-		
 
-		
-		//console.log(payload);
+		console.log(payload);
+		$.post("http://flip1.engr.oregonstate.edu:24561/post",payload, function(data){
+			console.log("posted");
+			loadTable();
+		});
 		
 		event.preventDefault();
 	});  
-  
+    $.get("http://flip1.engr.oregonstate.edu:24561/get", function(data){
+        console.log(data);
+        loadTable(data);
+    });
 }
 
 function resetForm(){
@@ -50,6 +47,22 @@ function resetForm(){
 	 document.getElementById("reps").value = "";
 	 document.getElementById("date").value = "";
 	 document.getElementById("lbs").checked = false;	
+}
+
+function loadTable(){
+
+    $.get("http://flip1.engr.oregonstate.edu:24561/get", function(data){
+        console.log(data);
+        $("#thetable tr").remove();
+        for(var i = 0; i < data.length; i++) {
+
+            document.getElementById("thetable").appendChild(addRow(data[i]));
+        }
+    });
+}
+
+function refreshTable(){
+
 }
 
 function addRow(payload){
@@ -76,13 +89,16 @@ function addRow(payload){
 			deleteButton.textContent = "Delete";
 			
 			deleteButton.addEventListener("click", function(event){
-				console.log("delete clicked");
+				var id = deleteButton.parentNode.childNodes[2].value;
+			    console.log("delete clicked on " + id);
+
 				event.preventDefault();
 			});			
 			
 			var hiddenId = document.createElement("input");
 			hiddenId.type = "hidden";
 			hiddenId.name = "rowId";
+			hiddenId.value = payload.id;
 			
 			buttonForm.appendChild(editButton);
 			buttonForm.appendChild(deleteButton);

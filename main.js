@@ -46,57 +46,45 @@ app.get('/reset-table',function(req,res,next){
     });
 });
 
-app.get('/',function(req,res){
+app.get('/',function(req,res, next){
     var  context = {results: "Words"};
     res.render('home', context);
 });
 
-app.get('/get-test',function(req,res){
+app.get('/get',function(req,res, next){
     var context = {};
-
+    console.log(req.query);
 
     pool.query('SELECT * FROM workouts', function(err, rows, fields){
         if(err){
             next(err);
             return;
         }
+        console.log(rows);
        res.send(rows);
 
     });
-
 });
 
-app.post('/post', function(req,res){
+app.post('/post', function(req,res, next){
 
-    pool.query("INSERT INTO workouts(`name`, `reps`, `weight`, `date`, `lbs`) VALUES (?, ?, ?, ?, ?)",[req.query], function(err, result){
+
+    var fromClient = req.body;
+    console.log(fromClient);
+    pool.query("INSERT INTO workouts SET name=?, reps=?, weight=?, date=?, lbs=?",
+        [fromClient.name, fromClient.reps, fromClient.weight, fromClient.date, fromClient.lbs], function(err, result, fields){
         if(err){
             next(err);
             return;
         }
         console.log(result);
-    });
+        res.send(result);
+});
 
 });
 
-app.post('/', function(req,res){
-  var context = {};
-  var queryParameters = [];
-  var bodyParameters = [];
-  
-  for(var parameter in req.query){
-	queryParameters.push({'name':parameter, 'value':req.query[parameter]});
-  }
-  
-  for (var parameter in req.body){
-	  console.log(parameter);
-	  console.log(req.body[parameter]);
-	  bodyParameters.push({'name':parameter, 'value':req.body[parameter]});
-  }
-  
-  context.reqType = "POST";  
-  context.urlData = queryParameters;
-  context.bodyData = bodyParameters;
-  res.render('home', context);	
+app.post('/', function(req,res, next){
+
 });
 
 app.use(function(req,res){
@@ -112,5 +100,5 @@ app.use(function(err, req, res, next){
 });
 
 app.listen(app.get('port'), function(){
-  console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate.');
+  console.log('Express started on http://flip1.engr.oregonstate.edu:' + app.get('port') + '; press Ctrl-C to terminate.');
 });
