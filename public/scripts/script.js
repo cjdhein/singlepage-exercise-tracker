@@ -2,16 +2,17 @@
  * Created by cjdhein on 2/7/2017.
  */
 setup();
-
+initModal();
 function setup(){
     document.body.appendChild(makeTable());
 	labelColumns();
     var addButton = document.getElementById("addRow");
+	var submitEdit = document.getElementById("submitEdit");
 	
 	$(function(){
 		$("#date").datepicker({dateFormat: 'mm-dd-yy'});
 	});
-
+	
     addButton.addEventListener("click", function(event){
 		var nameData = document.getElementById("exercise").value;
 		var weightData = document.getElementById("weight").value;
@@ -34,7 +35,14 @@ function setup(){
 		});
 		
 		event.preventDefault();
-	});  
+	}); 
+	
+	submitEdit.addEventListener("click", function(event){
+		var modal = document.getElementById("editModal");
+		modal.style.display = "none";
+		event.preventDefault();
+	});
+	
     $.get("http://flip1.engr.oregonstate.edu:24561/get", function(data){
         console.log(data);
         loadTable(data);
@@ -80,7 +88,33 @@ function addRow(payload){
 			editButton.name="edit";
 			
 			editButton.addEventListener("click", function(event){
-				console.log("edit clicked");
+				var temp = event.target.parentNode.parentNode.parentNode.children;
+				var nameData = temp[0].textContent;
+				var repsData = temp[1].textContent;
+				var weightData = temp[2].textContent;
+				var dateData = temp[3].textContent;
+				var lbsData = temp[4].textContent;
+				var databaseId = event.target.parentNode[2].textContent;
+				var data = {
+					name : nameData,
+					reps : repsData,
+					weight : weightData,
+					date : dateData,
+					lbs : lbsData,
+					id : databaseId
+				} 
+				
+				var modal = document.getElementById("editModal");
+				var fields = $("#editRecord input");
+				
+				fields[0].value = data.name;
+				fields[1].value = data.reps;
+				fields[2].value = data.weight;
+				fields[3].value = data.date;
+				fields[4].value = data.lbs;
+				fields[5].value = data.databaseId;
+				modal.style.display = "block";
+				console.log("edit clicked");				
 				event.preventDefault();
 			});
 			
@@ -151,9 +185,10 @@ function makeTable(){
 }
 
 
-function runProgram(){
-
-
+function initModal(){
+	
+	var modal = document.getElementById("editModal");
+	
 
 }
 
