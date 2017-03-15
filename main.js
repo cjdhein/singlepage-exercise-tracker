@@ -68,23 +68,58 @@ app.get('/get',function(req,res, next){
 
 app.post('/post', function(req,res, next){
 
-
-    var fromClient = req.body;
+    var fromClient = req.body; //data passed in post request
+	
     console.log(fromClient);
-    pool.query("INSERT INTO workouts SET name=?, reps=?, weight=?, date=?, lbs=?",
-        [fromClient.name, fromClient.reps, fromClient.weight, fromClient.date, fromClient.lbs], function(err, result, fields){
-        if(err){
-            next(err);
-            return;
-        }
-        console.log(result);
-        res.send(result);
-});
+    pool.query('INSERT INTO workouts SET name=?, reps=?, weight=?, date=?, lbs=?',
+        [fromClient.name, fromClient.reps, fromClient.weight, fromClient.date, fromClient.lbs], 
+		function(err, result){
+			if(err){
+				next(err);
+				return;
+			}
+			console.log(result);
+			res.send(result);
+	});
 
 });
 
-app.post('/', function(req,res, next){
-
+app.post('/edit', function(req,res, next){
+	
+	var fromClient = req.body; //data passed in post request
+	var resultCode; // value returned to client to inform if update was successful (1 = yes, 0 = no)
+	var resultText; // string explaining the result of the resultCode
+	var responseToClient = {'resultCode' : resultCode, 'resultText' : resultText}; //object containing the above success code and text to be returned to client
+	
+	//confirm there is only one result; ie: confirm only one record with the unique id
+	pool.query('SELECT * FROM workouts WHERE id=?', [fromClient.id], function(err, result){
+		if(err){
+			next(err),
+			return;
+		}
+		
+		// if there was a single result
+		if(result.length == 1){
+			pool.query('UPDATE workouts SET name=?, reps=?, weight=?, date=?, lbs=? WHERE id-?',
+				[fromClient.name, fromClient.reps, fromClient.weight, fromClient.date, fromClient.lbs, fromClient.id],
+				function(err, result){
+					if(err){
+						next(err),
+						return;
+					}
+					resultCode = 1;
+					resultText = "Update successful";
+			});
+			
+		}else{	//duplicate records with id exist
+			resultCode = 0;
+			resultText = "Update failed. Multiple records exist with the provided id";			
+		}
+	});
+	
+	//send response to client
+	res.send(responseToClient);
+	
 });
 
 app.use(function(req,res){
