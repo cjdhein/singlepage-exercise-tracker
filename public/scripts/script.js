@@ -4,12 +4,12 @@
 setup();
 
 function setup(){
-    document.body.appendChild(makeTable());
-	labelColumns();
+    $("#tablepanel").append(makeTable());
+    //document.body.appendChild(makeTable());
     var addButton = document.getElementById("addRow");
 	
 	$(function(){
-		$("#date").datepicker({dateFormat: 'mm-dd-yy'});
+		$("#date").datepicker({dateFormat: 'yy-mm-dd'});
 	});
 	
     addButton.addEventListener("click", function(event){
@@ -18,16 +18,23 @@ function setup(){
 		var repsData = document.getElementById("reps").value;
 		var dateData = document.getElementById("date").value;
 		var lbsData = document.getElementById("lbs").checked;
-		
+
+		if(lbsData == true){
+		    lbsData = 1;
+        }else{
+		    lbsData = 0;
+        }
+
 		var payload = {
 			name : nameData,
 			reps : repsData,
 			weight : weightData,
 			date : dateData,
-			lbs : lbsData,
+			lbs : lbsData
 		}
 		
-		document.getElementById("thetable").appendChild(addRow(payload));
+		//document.getElementById("thetable").appendChild(addRow(payload));
+        document.getElementsByClassName("mytable")[0].appendChild(addRow(payload));
 		console.log(payload);
 
 		$.post("http://flip1.engr.oregonstate.edu:24561/post", payload, function(data){
@@ -58,10 +65,21 @@ function loadTable(){
 
     $.get("http://flip1.engr.oregonstate.edu:24561/get", function(data){
         console.log(data);
-        $("#thetable tr").remove();
+        var table = $(".mytable");
+        $(".mytable tr").remove();
+        var headerRow = document.createElement("tr");
+        for(var i = 0; i < 6; i++){
+            var headCell = document.createElement("th");
+            headCell.className = "headCell";
+            headCell.id = ("head" + (i+1));
+            headerRow.appendChild(headCell);
+
+        }
+        table.append(headerRow);
+        labelColumns();
         for(var i = 0; i < data.length; i++) {
 
-            document.getElementById("thetable").appendChild(addRow(data[i]));
+            document.getElementsByClassName("mytable")[0].appendChild(addRow(data[i]));
         }
     });
 }
@@ -83,7 +101,12 @@ function addRow(payload){
 			var editButton = document.createElement("button");
 			editButton.textContent = "Edit";
 			editButton.name="edit";
-			
+			editButton.classList.add("btn");
+            editButton.classList.add("btn-default");
+            editButton.classList.add("modaltoggle");
+			editButton.setAttribute("data-toggle", "modal");
+            editButton.setAttribute("data-target", "editModal");
+
 			editButton.addEventListener("click", function(event){
 				var temp = event.target.parentNode.parentNode.parentNode.children;
 				var nameData = temp[0].textContent;
@@ -107,7 +130,7 @@ function addRow(payload){
 				fields[0].value = postData.name;
 				fields[1].value = postData.reps;
 				fields[2].value = postData.weight;
-				fields[3].value = postData.date;
+				fields[3].value = String(postData.date);
 				fields[4].value = postData.lbs;
 				fields[5].value = postData.id;
 				modal.style.display = "block";
@@ -115,10 +138,14 @@ function addRow(payload){
 				console.log("edit clicked");
 				
 				var submitEditButton = $("#submitEdit");
-				submitEditButton.addEventListener("click", function(event){
+				submitEditButton.click(function(event){
 					var modal = document.getElementById("editModal");
 					var fields = $("#editRecord input"); // the input fields in the edit modal
-					
+					if(fields[4].checked == true)
+					    fields[4].textContent = 1;
+					else
+                        fields[4].textContent = 0;
+
 					var updatedData = {
 						name : fields[0].textContent,
 						reps : fields[1].textContent,
@@ -127,16 +154,16 @@ function addRow(payload){
 						lbs : fields[4].textContent,
 						id : fields[5].textContent
 					}
-					
-					
-					modal.style.display = "none";
+                    $.post("http://flip1.engr.oregonstate.edu:24561/edit", postData, function(updatedData){
+                        console.log("posted");
+                        loadTable();
+                    });
+
+                    modal.style.display = "none";
 					event.preventDefault();
 				});	
 				
-				$.post("http://flip1.engr.oregonstate.edu:24561/edit", postData, function(data){
-					console.log("posted");
-					loadTable();
-				});	
+
 
 				event.preventDefault();	
 			});
@@ -144,7 +171,10 @@ function addRow(payload){
 			var deleteButton = document.createElement("button");
 			deleteButton.name = "delete";
 			deleteButton.textContent = "Delete";
-			
+            deleteButton.classList.add("btn");
+            deleteButton.classList.add("btn-default");
+
+
 			deleteButton.addEventListener("click", function(event){
 				var id = deleteButton.parentNode.childNodes[2].value;
 			    console.log("delete clicked on " + id);
@@ -193,16 +223,11 @@ function labelColumns(){
 
 function makeTable(){
     var table = document.createElement("table");
+    table.classList.add("mytable");
+    table.classList.add("table");
+    table.classList.add("table-striped");
     table.id = "thetable";
-	var headerRow = document.createElement("tr");
-	for(var i = 0; i < 6; i++){
-		var headCell = document.createElement("th");
-		headCell.className = "headCell";
-		headCell.id = ("head" + (i+1));
-		headerRow.appendChild(headCell);
-		
-	}
-		table.appendChild(headerRow);
+
 
     return table;
 }
