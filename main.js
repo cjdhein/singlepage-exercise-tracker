@@ -3,6 +3,7 @@ var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout:'main'});
 
 var bodyParser = require('body-parser');
+var dateFormat = require('dateformat');
 
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json());
@@ -25,7 +26,8 @@ var pool = mysql.createPool({
     host :  'mysql.eecs.oregonstate.edu',
     user :  'cs290_dheinc',
     password : '6144',
-    database : 'cs290_dheinc'
+    database : 'cs290_dheinc',
+    dateStrings: true
 });
 
 
@@ -72,7 +74,7 @@ app.post('/post', function(req,res, next){
 	
     console.log(fromClient);
     pool.query('INSERT INTO workouts SET name=?, reps=?, weight=?, date=?, lbs=?',
-        [fromClient.name, fromClient.reps, fromClient.weight, fromClient.date, fromClient.lbs], 
+        [fromClient.name, fromClient.reps, fromClient.weight, fromClient.date, fromClient.lbs],
 		function(err, result){
 			if(err){
 				next(err);
@@ -94,17 +96,17 @@ app.post('/edit', function(req,res, next){
 	//confirm there is only one result; ie: confirm only one record with the unique id
 	pool.query('SELECT * FROM workouts WHERE id=?', [fromClient.id], function(err, result){
 		if(err){
-			next(err),
+			next(err);
 			return;
 		}
 		
 		// if there was a single result
 		if(result.length == 1){
 			pool.query('UPDATE workouts SET name=?, reps=?, weight=?, date=?, lbs=? WHERE id-?',
-				[fromClient.name, fromClient.reps, fromClient.weight, fromClient.date, fromClient.lbs, fromClient.id],
+				[fromClient.name, fromClient.reps, fromClient.weight, dateFormat(fromClient.date,"yyyy-mm-dd"), fromClient.lbs, fromClient.id],
 				function(err, result){
 					if(err){
-						next(err),
+						next(err);
 						return;
 					}
 					resultCode = 1;
