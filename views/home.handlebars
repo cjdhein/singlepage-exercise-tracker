@@ -1,35 +1,46 @@
-<div>
-	<form class="mainform" method="post" id="addRecord">
-		<div class="add-form">
-			<p><label>Exercise name:</label><input type="text" id="exercise"></p>
-			<p><label>Reps:</label><input type="number" id="reps"></p>
-			<p><label>Weight:</label><input type="number" id="weight"></p>
+<div id ="addpanel" class="panel panel-primary">
 
-		</div>
-		<div class="add-form"class="half-form">
-			<p><label>Date:</label><input type="text" id="date"></p>
-			<p><label>Check if weight is in lbs </label><input type="checkbox" id="lbs"></p>
-			<button id="addRow"> Add Exercise</button>
-		</div>		
-	</form>
+    <div class="panel-heading">Add Exercise</div>
+    <div class="panel-body">
+        <form class="mainform" method="post" id="addRecord">
+            <div class="col-lg-8 col-md-8 col-sm-8">
+                <span><label>Exercise name:</label><input type="text" id="exercise"></span>
+                <span><label>Reps:</label><input type="number" id="reps"></span>
+                <span><label>Weight:</label><input type="number" id="weight"></span>
+                <span><label>Date:</label><input type="text" id="date"></span>
+                <span><label>Check if weight is in lbs </label><input type="checkbox" id="lbs"></span>
+                <span><button class="btn btn-default" id="addRow"> Add Exercise</button></span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="tablepanel" class="panel panel-info">
 
 </div>
 
-<div id="editModal" class="modal">
-	<div class="modal-content">
-		<form class="mainform" method="post" id="editRecord">
-			<div class="edit-form">
-				<p><label>Exercise name:</label><input type="text" id="exercise"></p>
-				<p><label>Reps:</label><input type="number" id="reps"></p>
-				<p><label>Weight:</label><input type="number" id="weight"></p>
-				<p><label>Date:</label><input type="text" id="date"></p>
-				<p><label>Check if weight is in lbs </label><input type="checkbox" id="lbs"></p>
-				<input type="hidden" id="databaseId">
-				<button id="submitEdit">Update</button>
-				<button id="closeEdit">Cancel</button>
-			</div>		
-		</form>			
-	</div>
+<div id="editModal" class="modal fade">
+	<div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Record</h4>
+            </div>
+            <div class="modal-body">
+                <form class="mainform" method="post" id="editRecord">
+                    <div class="edit-form">
+                        <span><label>Exercise name:</label><input type="text" id="exercise"></span>
+                        <span><label>Reps:</label><input type="number" id="reps"></span>
+                        <span><label>Weight:</label><input type="number" id="weight"></span>
+                        <span><label>Date:</label><input type="text" id="date"></span>
+                        <span><label>Check if weight is in lbs </label><input type="checkbox" id="lbs"></span>
+                        <input type="hidden" id="databaseId">
+                        <button class="btn btn-default" id="submitEdit">Update</button>
+                        <button class="btn btn-default" id="closeEdit">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="script.js"></script>
+
