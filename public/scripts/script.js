@@ -84,10 +84,6 @@ function loadTable(){
     });
 }
 
-function refreshTable(){
-
-}
-
 function addRow(payload){
 	var newRow = document.createElement("tr");
 	for(var i = 0; i < 6; i++){
@@ -115,6 +111,13 @@ function addRow(payload){
 				var dateData = temp[3].textContent;
 				var lbsData = temp[4].textContent;
 				var databaseId = parseInt(event.target.parentNode[2].value);
+
+				if(lbsData == "1"){
+				    lbsData = true;
+                }else{
+				    lbsData = false;
+                }
+
 				var postData = {
 					name : nameData,
 					reps : repsData,
@@ -131,39 +134,62 @@ function addRow(payload){
 				fields[1].value = postData.reps;
 				fields[2].value = postData.weight;
 				fields[3].value = String(postData.date);
-				fields[4].value = postData.lbs;
+				fields[4].checked = postData.lbs;
 				fields[5].value = postData.id;
 				modal.style.display = "block";
-				console.log(fields[5].value);
-				console.log("edit clicked");
+
 				
 				var submitEditButton = $("#submitEdit");
 				submitEditButton.click(function(event){
 					var modal = document.getElementById("editModal");
 					var fields = $("#editRecord input"); // the input fields in the edit modal
 					if(fields[4].checked == true)
-					    fields[4].textContent = 1;
+					    fields[4].value = 1;
 					else
-                        fields[4].textContent = 0;
+                        fields[4].value = 0;
 
 					var updatedData = {
-						name : fields[0].textContent,
-						reps : fields[1].textContent,
-						weight : fields[2].textContent,
-						date : fields[3].textContent,
-						lbs : fields[4].textContent,
-						id : fields[5].textContent
+						name : fields[0].value,
+						reps : fields[1].value,
+						weight : fields[2].value,
+						date : fields[3].value,
+						lbs : fields[4].value,
+						id : fields[5].value
 					}
-                    $.post("http://flip1.engr.oregonstate.edu:24561/edit", postData, function(updatedData){
-                        console.log("posted");
+
+					console.log(updatedData);
+
+					$.post("http://flip1.engr.oregonstate.edu:24561/edit", updatedData, function(result){
+                        modal.style.display = "none";
+
+					    if(result == "ok"){
+                            var successModal = document.getElementById("successModal");
+                            successModal.style.display = "block";
+                            setTimeout(function(){
+                                $("#successModal").fadeOut('fast');
+                            }, 1500);
+                        }else{
+                            var errorModal = document.getElementById("errorModal");
+                            errorModal.style.display = "block";
+                            setTimeout(function(){
+                                $("#errorModal").fadeOut('fast');
+                            }, 2000);
+                        }
+
+
                         loadTable();
                     });
 
-                    modal.style.display = "none";
+
 					event.preventDefault();
 				});	
 				
-
+                var cancelEditButton = $("#closeEdit");
+                cancelEditButton.click(function(event){
+                    var modal = document.getElementById("editModal");
+                    modal.style.display = "none";
+                    event.preventDefault();
+                });
 
 				event.preventDefault();	
 			});
@@ -177,7 +203,26 @@ function addRow(payload){
 
 			deleteButton.addEventListener("click", function(event){
 				var id = deleteButton.parentNode.childNodes[2].value;
+
 			    console.log("delete clicked on " + id);
+
+			    $.post("http://flip1.engr.oregonstate.edu:24561/delete", {id : id}, function(result){
+
+                    if(result == "ok"){
+                        var successModal = document.getElementById("successModal");
+                        successModal.style.display = "block";
+                        setTimeout(function(){
+                            $("#successModal").fadeOut('fast');
+                        }, 1500);
+                    }else{
+                        var errorModal = document.getElementById("errorModal");
+                        errorModal.style.display = "block";
+                        setTimeout(function(){
+                            $("#errorModal").fadeOut('fast');
+                        }, 2000);
+                    }
+                    loadTable();
+                });
 
 				event.preventDefault();
 			});			
@@ -224,8 +269,6 @@ function labelColumns(){
 function makeTable(){
     var table = document.createElement("table");
     table.classList.add("mytable");
-    table.classList.add("table");
-    table.classList.add("table-striped");
     table.id = "thetable";
 
 

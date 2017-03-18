@@ -1,71 +1,61 @@
-/*
 
 
-
-input{
-	float: right;
+body{
+	background-color: #404040;
+	color: #cccccc;
+	font-family: Tahoma, Geneva, Arial;
 }
 
-.add-form{
-	margin: auto;
-	width: 30%;
+span{
 	display: inline;
-	float:left;
+	float: left;
+	margin: 10px;
+}
+
+label{
 	padding: 10px;
 }
 
-.edit-form{
+tr:nth-of-type(odd){
+	background-color: #353a41;
+}
+
+td, th{
+	text-align: center;
 
 }
 
-.nameCell{
-	border: 1px inset black;
+#thetable th{
+	padding: 15px;
+	width: 150px;
 }
-
-.repCell{
-	border: 1px inset black;
-}
-
-.weightCell{
-	border: 1px inset black;
-}
-
-.dateCell{
-	border: 1px inset black;
-}
-
-.lbsCell{
-	border: 1px inset black;
-}
-
-.buttonHeader{
-
-
-}
-
-
 
 .modal{
-    display: none; // Hidden by default
-    position: fixed; // Stay in place
-    z-index: 1; // Sit on top
-    left: 0;
-    top: 0;
-    width: 100%; // Full width
-    height: 100%; // Full height
-    overflow: auto; // Enable scroll if needed
-    background-color: rgb(0,0,0); // Fallback color
-    background-color: rgba(0,0,0,0.4); // Black w/ opacity
+	display: none;
+	position: absolute;
+	z-index: 1;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgb(0,0,0);
+	background-color: rgba(0,0,0,0.4);
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; // 15% from the top and centered
-    padding: 20px;
-    border: 1px solid #888;
-    width: 30%; // Could be more or less, depending on screen size
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 30%;
 }
-*/
+
+.modal > .success-content .error-content{
+	background-color: rgba(0,0,0,0.4);
+	border: none;
+}
+
 .mainform{
 
 	float: left;
@@ -93,28 +83,86 @@ input{
 	border: 1px solid white;
 	border-collapse: collapse;
 	border-spacing: 0;
-
-}
-
-span{
-	display: inline;
-	float: left;
-	margin: 10px;
-}
-
-label{
 	padding: 10px;
 }
 
-tr:nth-of-type(odd){
-	background-color: #353a41;
+.btn{
+	border-color: rgba(0, 0, 0, 0.6);
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
 }
 
-td, th{
-	text-align: center;
 
+.panel {
+	margin-bottom: 20px;
+	background-color: #2e3338;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 }
-
-th{
+.panel-body {
 	padding: 15px;
+	margin: auto;
+	/*height: 150px;*/
+	overflow: auto;
+}
+.panel-heading {
+	padding: 10px 15px;
+	border-bottom: 1px solid transparent;
+	border-top-right-radius: 3px;
+	border-top-left-radius: 3px;
+	background-color: #5c6670;
+}
+
+
+.panel-default {
+	border-color: rgba(0, 0, 0, 0.6);
+}
+.panel-default > .panel-heading {
+	color: #c8c8c8;
+	background-color: #3e444c;
+	border-color: rgba(0, 0, 0, 0.6);
+}
+.panel-default > .panel-heading + .panel-collapse > .panel-body {
+	border-top-color: rgba(0, 0, 0, 0.6);
+}
+.panel-default > .panel-heading .badge {
+	color: #3e444c;
+	background-color: #c8c8c8;
+}
+.panel-default > .panel-footer + .panel-collapse > .panel-body {
+	border-bottom-color: rgba(0, 0, 0, 0.6);
+}
+
+.alert{
+	color: #555;
+	border-radius: 10px;
+	font-family: Tahoma, Geneva, Arial;
+	padding: 10px 10px 10px 30px;
+	margin: 10px;
+}
+
+.alert span{
+	font-weight: bold;
+	margin: auto;
+	padding-right: 15px;
+}
+
+.alert-success{
+	background-color: #e9ffa9;
+	border: 1px solid #a6ca8a;
+	margin: auto;
+}
+
+.alert-error{
+	background-color:#fff8c4;
+	border:1px solid #f2c779;
+}
+
+.ui-datepicker-calendar{
+	width:250px !important;
+}
+.ui-datepicker-calendar th{
+	width:250px !important;
+	padding: 0px;
 }

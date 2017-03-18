@@ -89,10 +89,11 @@ app.post('/post', function(req,res, next){
 app.post('/edit', function(req,res, next){
 	
 	var fromClient = req.body; //data passed in post request
-	var resultCode; // value returned to client to inform if update was successful (1 = yes, 0 = no)
-	var resultText; // string explaining the result of the resultCode
-	var responseToClient = {'resultCode' : resultCode, 'resultText' : resultText}; //object containing the above success code and text to be returned to client
-	
+	var resultText = ""; // string explaining the result of the resultCode
+
+
+    console.log(fromClient);
+
 	//confirm there is only one result; ie: confirm only one record with the unique id
 	pool.query('SELECT * FROM workouts WHERE id=?', [fromClient.id], function(err, result){
 		if(err){
@@ -102,26 +103,64 @@ app.post('/edit', function(req,res, next){
 		
 		// if there was a single result
 		if(result.length == 1){
-			pool.query('UPDATE workouts SET name=?, reps=?, weight=?, date=?, lbs=? WHERE id-?',
+		    console.log("Found only one");
+			pool.query('UPDATE workouts SET name=?, reps=?, weight=?, date=?, lbs=? WHERE id=?',
 				[fromClient.name, fromClient.reps, fromClient.weight, dateFormat(fromClient.date,"yyyy-mm-dd"), fromClient.lbs, fromClient.id],
 				function(err, result){
 					if(err){
 						next(err);
 						return;
 					}
-					resultCode = 1;
-					resultText = "Update successful";
+                    //send response to client
+					console.log(result);
+					res.type('html');
+                    res.send('ok');
 			});
 			
 		}else{	//duplicate records with id exist
-			resultCode = 0;
-			resultText = "Update failed. Multiple records exist with the provided id";			
+            console.log("found more");
+            //send response to client
+            res.send('bad');
 		}
 	});
-	
-	//send response to client
-	res.send(responseToClient);
-	
+
+});
+
+app.post('/delete', function(req,res, next){
+
+    var idToDelete = req.body.id;
+
+    pool.query('SELECT * FROM workouts WHERE id=?', [idToDelete], function(err, result){
+        if(err){
+            next(err);
+            return;
+        }
+
+        // if there was a single result
+        if(result.length == 1){
+            console.log("Found only one");
+            pool.query('DELETE FROM workouts WHERE id=?',
+                [idToDelete],
+                function(err, result){
+                    if(err){
+                        next(err);
+                        return;
+                    }
+                    //send response to client
+                    console.log(result);
+                    res.type('html');
+                    res.send('ok');
+                });
+
+        }else{	//duplicate records with id exist
+            console.log("found more");
+            //send response to client
+            res.send('bad');
+        }
+    });
+
+    console.log(idToDelete);
+
 });
 
 app.use(function(req,res){
